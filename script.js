@@ -1,76 +1,66 @@
 const fields = Array.from(document.getElementsByClassName('field'));
-const playerX = document.getElementsByClassName('fa-x');
-const playerO = document.getElementsByClassName('fa-o');
+const markerX = document.createElement('i');
+const markerO = document.createElement('i');
+const startBtn = document.getElementById('startBtn');
+const resetBtn = document.getElementById('resetBtn');
 
-let circleTurn = false;
-let winningCheckerX = [];
-let winningCheckerO = [];
+const Player = (name, marker) => {
+  const getName = () => name;
+  const getMarker = () => marker;
 
-const gameBoard = (() => {
-  let round = 0;
-  
-  fields.forEach(field => {
-    field.addEventListener('click', handleClick, {once: true})
-  })
+  return {getName, getMarker};
+}
 
-  /* I overlapped both the X and O in the CSS and turned off the visibility, 
-  If you click on the cell, the marker gets visible (depending on which turn) */
-  function handleClick(e){
-    let cell = e.target;
-    let cellX = e.target.querySelector('.fa-x');
-    let cellO = e.target.querySelector('.fa-o');
+const playerX = Player('Chris', 'X');
+const playerO = Player('Scoob', 'O');
 
-    /* Fill the winningChecker Arrays with the marked spots and compare it later*/
-    if (!circleTurn && round < 9){
-      winningCheckerX.push(fields.indexOf(cell));
-      winningCheckerX.sort();
-      
-      cellX.style.visibility = "visible";
-      cell.style.cursor = "not-allowed";
-      
-      gameController.winningChecker();
-      circleTurn = true;
+const gameControlling = (() =>{
+  //Start the game via the start button
 
-    }else{
+  const startGame = () => {
+    let rounds = 9;
+    let circleTurn = false;
 
-      winningCheckerO.push(fields.indexOf(cell));
-      winningCheckerO.sort();
+    console.log("Game has been started!");
 
-      cellO.style.visibility = "visible";
-      cell.style.cursor = "not-allowed";
-
-      gameController.winningChecker();
-      circleTurn = false;
+    function markX() {
+      markerX;
+      markerX.classList.add("fa-solid", "fa-x", "fa-10x");
     }
-  }
-})();
-
-const gameController = (() => {
-
-  /* All of the winning combinations in following pattern:[0,1,2] 
-                                                          [3,4,5]
-                                                          [6,7,8]*/
-  const WINNING_COMBINATIONS = [[0,1,2], 
-                                [3,4,5], 
-                                [6,7,8],
-                                [0,4,8],
-                                [2,4,6],
-                                [0,3,6],
-                                [2,5,8],
-                                [1,4,7]];
-
-  function winningChecker(winningCheckerO, winningCheckerX, WINNING_COMBINATIONS) {
-    for (let comb in WINNING_COMBINATIONS){
-      if(comb == winningCheckerO){
-        console.log("O wins!")
-      }else if(comb == winningCheckerX){
-        console.log("X wins!")
+    
+    function markO() {
+      markerO;
+      markerO.classList.add("fa-solid", "fa-o", "fa-10x");
+    }
+    fields.forEach(function(field) {
+      field.addEventListener('click', handleClick, {once: true})
+    })
+    
+    function handleClick(e){
+      let cell = e.target;
+      console.log(cell + " has been clicked!");
+      if(!circleTurn){
+        markX();
+        cell.appendChild(markerX);
+        circleTurn = true;
       }else{
-        console.log("It's a draw!")
+        markO();
+        cell.appendChild(markerO);
+        circleTurn = false;
       }
+      rounds--;
     }
   }
+  return {startGame};
+  //Enter your name (Player 1 gets 'X' & Player 2 gets 'O')
 
-  return {winningChecker}
+  //The players should alternate every round (starting with the 'X' Player)
+
+  //Announce the winner when the winning combination is met
+
+  //It's a draw when the field is full (after 9 rounds)
+
+  //The reset button resets the whole cycle
 })();
 
+console.log(markerX, markerO);
