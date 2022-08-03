@@ -1,11 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
+
 * {
   margin: 0;
   padding: 0;
   color: lightpink;
+  font-family: 'Anton', sans-serif;
+}
+
+#overlay {
+  position: fixed;
+  display: none;
+  top: 25%;
+  left: 25%;
+  right: 25%;
+  bottom: 25%;
+  background-color: rgba(0,0,0,0.5);
 }
 
 body, html {
   min-height: 100vh;
+}
+
+h1, button{
+  font-size: 3em;
+  letter-spacing: 5px;
 }
 
 header {

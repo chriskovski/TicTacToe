@@ -11,9 +11,10 @@
 </head>
 <body>
   <header>
-    <h1>Tic Tac Toe</h1>
+    <h1>TIC TAC TOE</h1>
   </header>
   <main>
+    <div id="overlay"><p>PRESS START TO PLAY THE GAME!</p></div>
     <div class="container">
       <div class="board">
         <div class="field"></div>
@@ -27,8 +28,8 @@
         <div class="field"></div>
       </div>
       <div class="controlling">
-        <button id="startBtn" onclick="gameControlling.startGame()">Start</button>
-        <button id="resetBtn">Reset</button>
+        <button id="startBtn" onclick="gameBoard.startGame()">START</button>
+        <button id="resetBtn" onclick="gameBoard.resetGame()">RESET</button>
       </div>
     </div>
   </main>
