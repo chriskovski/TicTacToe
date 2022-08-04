@@ -7,14 +7,16 @@
   font-family: 'Anton', sans-serif;
 }
 
-#overlay {
+#overlay, #winnerOverlay {
   position: fixed;
   display: none;
-  top: 25%;
-  left: 25%;
-  right: 25%;
-  bottom: 25%;
-  background-color: rgba(0,0,0,0.5);
+  height: 100%;
+  width: 100%;
+  z-index: 2;
+  font-size: 4em;
+  text-align: center;
+  padding-top: 30vh;
+  background-color: rgba(0, 0, 0, 0.75);
 }
 
 body, html {
@@ -54,9 +56,12 @@ header {
 .field {
   border: 3px solid white;
   text-align: center;
-  color: lightpink;
   cursor: pointer;
   position: relative;
+}
+
+.field:hover{
+  background-color: rgba(250, 194, 203, 0.75);
 }
 
 i {
@@ -75,6 +80,10 @@ i {
   width: 100%;
   display: flex;
   justify-content: center;
+}
+
+#startBtn {
+  z-index: 3;
 }
 
 button {

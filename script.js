@@ -1,9 +1,15 @@
-
-
 const gameBoard = (() => {
   //Get each of the field divs into an array calles "fields"
   const fields = Array.from(document.getElementsByClassName('field'));
+  
+  const startBtn = document.getElementById('startBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const winnerOverlay = document.getElementById('winnerOverlay');
+  
+  let p = document.createElement("p");
+  
   document.getElementById("overlay").style.display = "block";
+
   //A object constructor making the players
   const Player = (name, marker, ai, turn) => {
     return {name, marker, ai, turn};
@@ -29,14 +35,79 @@ const gameBoard = (() => {
     [2,5,8]
   ]
 
-  //Start the game via the start button
-  const startGame = () => {
-    document.getElementById("overlay").style.display = "none";
-    playerTurn();
-    console.log("Game has been started!");
-    console.log("Welcome " + playerX.name + " as Player X!")
-    console.log("Welcome " + playerO.name + " as Player O!")
+    /*Two functions for player turns get defined:
+    - First, a corresponding Symbol gets created and is getting appended to the clicked tile
+    - Then the gameboardX (or O) is getting filled with the number of the tile in the index field of the array (it's for a better and easier comparison)
+    - Lastly, the player turn switches */
+
+    //Function for the turn of Player X
+      function playerTurnX(tile, cell){
+        const markerMaker = document.createElement('i');
+        markerMaker.className = "";
+        markerMaker.classList.add("fa-solid", "fa-x", "fa-10x");
+        tile.appendChild(markerMaker);
+        let index = fields.indexOf(cell);
+        gameboardX[index] = index;
+        checkWin(gameboardX);
+        playerX.turn = false;
+        playerO.turn = true;
+      }
+
+      //Function for the turn of Player O
+      function playerTurnO(tile, cell){
+        const markerMaker = document.createElement('i');
+        markerMaker.className = "";
+        markerMaker.classList.add("fa-solid", "fa-o", "fa-10x");
+        tile.appendChild(markerMaker);
+        let index = fields.indexOf(cell);
+        gameboardO[index] = index;
+        checkWin(gameboardO);
+        playerX.turn = true;
+        playerO.turn = false;
+      }    
+  
+  
+  const startOfGame = () => {
+
+    //add click event to every field on the gameboard
+    fields.forEach(field => {
+      field.addEventListener('click', e => {
+        let cell = e.target;
+
+        //Each time a field on the gameboard is clicked, it creates a blank symbol
+        //Depending on the player turn, the blank symbol gets filled with either a 'X' or an 'O', and it gets appended to the clicked field
+        playerX.turn ? playerTurnX(field, cell) : playerTurnO(field, cell);
+        rounds === 9 ? rounds++ : rounds++;
+
+      },{once: true})
+    });
   }
+
+  //startGame hides the overlay and starts the logic for the gameboard. It also removes the EventListener from itself, so it can be clicked only once (until game resets)
+  const startGame = () => { 
+    document.getElementById("overlay").style.display = "none";
+    
+    startOfGame();
+    startBtn.removeEventListener('click', startGame);
+    startBtn.style.color = "grey";
+    startBtn.style["border-color"] = "grey";
+    while (winnerOverlay.firstChild) {
+      winnerOverlay.removeChild(winnerOverlay.firstChild);
+    }
+    console.log(gameboardO, gameboardX, fields.childNodes);
+  }
+
+  //resetGame resets all the variables, brings up the "Press Start" overlay back again and adds the EventListener back to the start button.
+  const resetGame = () => {
+    location.reload();
+  }
+
+  //resets the Game via the reset Button
+  resetBtn.addEventListener('click', resetGame)
+
+  //Start the game via the start button
+  startBtn.addEventListener('click', startGame)
+  
   //Game starts with the first round
   let rounds = 1;
   
@@ -50,103 +121,31 @@ const gameBoard = (() => {
       })
 
       //If there is a checkArr including the winning combination, then stop the game and output the winner, otherwise the game ends in a draw
-      if(winner === true && playerO.turn){
-        console.log("Player X wins!");
+      if(winner === true && playerX.turn){
+        p.innerText = "PLAYER X WINS!";
+        winnerOverlay.appendChild(p);
+        winnerOverlay.style.display = "block";
+        resetBtn.style["z-index"] = 4;
         playerX.turn = false;
         playerO.turn = false;
-      }else if(winner === true && playerX.turn){
-        console.log("Player O wins!");
+        console.log(gameboardO, gameboardX, fields)
+      }else if(winner === true && playerO.turn){
+        p.innerText = "PLAYER O WINS!";
+        winnerOverlay.appendChild(p);
+        winnerOverlay.style.display = "block";
+        resetBtn.style["z-index"] = 4;
         playerX.turn = false;
         playerO.turn = false;
-      }else if(winner === false && rounds === 9){
-        console.log("It's a draw")
+        console.log(gameboardO, gameboardX, fields)
+      }else if(winner === false && rounds === 10){
+        p.innerText = "IT'S A DRAW!";
+        winnerOverlay.appendChild(p);
+        winnerOverlay.style.display = "block";
+        resetBtn.style["z-index"] = 4;
         playerX.turn = false;
         playerO.turn = false;
+        console.log(gameboardO, gameboardX, fields)
       }
     }
   }
-  
-  const playerTurn = () => {
-    
-    /*Two functions for player turns get defined:
-    - First, a corresponding Symbol gets created and is getting appended to the clicked tile
-    - Then the gameboardX (or O) is getting filled with the number of the tile in the index field of the array (it's for a better and easier comparison)
-    - Lastly, the player turn switches */
-
-    //Function for the turn of Player X
-    function playerTurnX(tile, cell){
-      const markerMaker = document.createElement('i');
-      markerMaker.classList.add("fa-solid", "fa-x", "fa-10x");
-      tile.appendChild(markerMaker);
-      
-      let index = fields.indexOf(cell);
-      gameboardX[index] = index;
-      
-      playerX.turn = false;
-      playerO.turn = true;
-    }
-
-    //Function for the turn of Player O
-    function PlayerTurnO(tile, cell){
-      const markerMaker = document.createElement('i');
-      markerMaker.classList.add("fa-solid", "fa-o", "fa-10x");
-      tile.appendChild(markerMaker);
-      
-      let index = fields.indexOf(cell);
-      gameboardO[index] = index;
-
-      playerX.turn = true;
-      playerO.turn = false;
-  }
-
-    //add click event to every field on the gameboard
-    fields.forEach(field => {
-      field.addEventListener('click', e => {
-        let cell = e.target;
-        
-        //Each time a field on the gameboard is clicked, it creates a blank symbol
-        //Depending on the player turn, the blank symbol gets filled with either a 'X' or an 'O', and it gets appended to the clicked field
-        
-        if(playerX.turn){
-          playerTurnX(field, cell);
-          checkWin(gameboardX);
-          rounds++;
-        }else if(playerO.turn){
-          PlayerTurnO(field, cell);
-          checkWin(gameboardO);
-          rounds++;
-        }else{
-          console.log("Game is Over!");
-        }
-      }, {once: true});
-    })
-  }
-  
-  const resetGame = () => {
-    rounds = 1;
-    fields.forEach(field => field.innerHTML = '');
-    playerX.turn = true;
-    playerO.turn = false;
-    gameboardX = ['','','','','','','','',''];
-    gameboardO = ['','','','','','','','',''];
-    document.getElementById("overlay").style.display = "block";
-  }
-  return {startGame, resetGame}
-})();
-
-const gameControlling = (() =>{
-  const startBtn = document.getElementById('startBtn');
-  const resetBtn = document.getElementById('resetBtn');
-
-  
- 
-  //Enter your name (Player 1 gets 'X' & Player 2 gets 'O')
-
-  //The players should alternate every round (starting with the 'X' Player)
-
-  //Announce the winner when the winning combination is met
-
-  //It's a draw when the field is full (after 9 rounds)
-
-  //The reset button resets the whole cycle
 })();
